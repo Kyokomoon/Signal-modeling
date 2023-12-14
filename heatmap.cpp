@@ -237,6 +237,54 @@ void HeatMap::paintMap(){
 
     view = new QGraphicsView(scene);
 }
+void HeatMap::paintMap3d(QImage *mapImage){
+    int i,j;
+    QPainter p(mapImage);
+    QColor colorr;
+    for(i = 0; i < 1000; i ++){
+        for(j=0; j< 1000; j++){
+            int minValue = -144;
+                int maxValue = -44;
+                int value = loss_map[i][j];
+
+                RGB red = { 255, 0, 0 };
+                RGB orange = { 255, 165, 0 };
+                RGB yellow = { 255, 255, 0 };
+                RGB green = { 0, 255, 0 };
+                RGB blue = { 0, 0, 255 };
+
+                RGB color;
+
+                if (value <= maxValue && value >= minValue) {
+                    if (value <= -44 && value >= -64) {
+                        color = interpolateColor(red, orange, minValue, -64, value);
+                    }
+                    else if (value <= -64 && value >= -84) {
+                        color = interpolateColor(orange, yellow, -64, -84, value);
+                    }
+                    else if (value <= -84 && value >= -104) {
+                        color = interpolateColor(yellow, green, -84, -104, value);
+                    }
+                    else if (value <= -104 && value >= -124) {
+                        color = interpolateColor(green, blue, -104, -124, value);
+                    }
+                    else if (value <= -124 && value >= -144) {
+                        color = interpolateColor(blue, red, -124, -144, value);
+                    }
+                }
+
+
+
+                mapImage->setPixelColor(i, j, QColor(color.red, color.green, color.blue));
+        }
+    }
+    for(i=(target_x-1) ;i<= (target_x + 1);i++){
+        for(j=(target_y-1) ;j<= (target_y + 1);j++){
+
+            mapImage->setPixelColor(i, j, QColor(255, 255, 255));
+        }
+    }
+}
 void HeatMap::drowAll(int x1, int y1, int x2,int y2, int type){
     if(type == 1){
         scene->addLine(x1, y1, x2, y2);

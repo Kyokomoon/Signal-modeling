@@ -1,6 +1,11 @@
 #ifndef HEATMAP_H
 #define HEATMAP_H
+#include <QLabel>
+#include <QVBoxLayout>
+#include <cmath>
 #include <QPainter>
+#include <QLineF>
+#include <QtMath>
 #include <QtWidgets>
 const int massize=1000;
 struct WALL{
@@ -28,6 +33,7 @@ public:
     void calculateLoss();
     void addBarrier(int x1, int y1, int x2, int y2, int type,int type_material, int i);
     void paintMap();
+    void paintMap3d(QImage *mapImage);
     void drowAll(int x1, int y1, int x2,int y2, int type);
     void set_value_f(double F);
     ~HeatMap();
@@ -45,8 +51,8 @@ public:
     void set_target_y(int ty);
 private:
 
-    float f = 2.4, pl,it,d, distancePix = 10;
-    int target_x = 400, target_y = 550;
+    float f = 2.4, pl,it,d, distancePix = 33;
+    int target_x = 200, target_y = 350;
     int TxPower = 23, AntGain = 4;
     WALL wals[4];
     int** loss_map = new int *[1000];

@@ -1,28 +1,62 @@
 #include "mainwindow.h"
+#include <QLabel>
+#include <QVBoxLayout>
+#include <cmath>
+#include <QPainter>
+#include <QLineF>
+#include <QtMath>
 #include <QtWidgets>
 #include "heatmap.h"
 #include "barrier.h"
+#include "map_3d.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    Map_3D *map_3d = new Map_3D(200, 50, 800, 800, 1000, 1000);
+    this->setFixedSize(1300, 1000);
+    mapImage = QImage(1000, 1000, QImage::Format_RGB32);
+
     gradientGroupBox_ = new QGroupBox(QStringLiteral("Signal Strength"));
     infoGroupBox_ = new QGroupBox(QStringLiteral("info: "));
         infoGroupBox_->resize(200,220);
         infoGroupBox_->move(0,500);
         scene = new QGraphicsScene();
+        view = new QGraphicsView(scene);
         map = new HeatMap();
-        map->addBarrier(40,100,100,70, 1 ,Beton,0);
-        map->addBarrier(300,100,400,140, 1 ,Drywall,1);
-        map->addBarrier(600,500,600,550, 1 ,Glass_IRR,2);
+        map->addBarrier(150,270,220,200, 1 ,Drywall,0);
+        map->addBarrier(300,100,400,140, 1 ,Glass_IRR,1);
+        map->addBarrier(600,500,600,550, 1 ,Beton,2);
         map->addBarrier(600,800,60,80, 2 ,Glass_P,3);
+        //int i=1,s_x=150, s_y=300, st_s_x = s_x;
+        /*while(i < 10){
+            map->addBarrier(s_x,s_y,4,4, 2 ,Glass_P,i+3);
+            s_x += 10;
+            if(i%3==0){
+                s_y += 10;
+                s_x = st_s_x;
+            }
+
+
+        }*/
         map->calculateLoss();
-        map->paintMap();
+        //map->paintMap();
+        map->paintMap3d(&mapImage);
+        mapImage.save("map_signal.png");
 
 
-
-        setCentralWidget(map->get_view());
-        draw();
+        QLabel* imageLabel = new QLabel();
+        imageLabel->setPixmap(QPixmap::fromImage(mapImage));
+        scene->addPixmap(QPixmap::fromImage(mapImage));
+        view->setGeometry(170, 0, 1000, 1000);
         draw_gradient_panel();
+
+        this->layout()->addWidget(map_3d->get_container());
+        map_3d->render("map_signal.png");
+
+
+        //setCentralWidget(map->get_view());
+        //draw();
+
 
 
 
@@ -36,10 +70,10 @@ void MainWindow:: on_pushButton_clicked(){
     map->set_target_x(line_target_x->text().toInt());
     map->set_target_y(line_target_y->text().toInt());
 
-    map->addBarrier(40,100,100,70, 1 ,Beton,0);
+    map->addBarrier(40,100,100,70, 1 ,Glass_P,0);
     map->addBarrier(300,100,400,140, 1 ,Drywall,1);
     map->addBarrier(600,500,600,550, 1 ,Glass_IRR,2);
-    map->addBarrier(600,800,60,80, 2 ,Glass_P,3);
+    map->addBarrier(600,800,60,80, 2 ,Beton,3);
     map->calculateLoss();
     map->paintMap();
     setCentralWidget(map->get_view());

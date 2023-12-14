@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
     QGroupBox *gradientGroupBox_, *infoGroupBox_;
     QLineEdit *line_Tx, *line_An, *line_F, *line_PixDist, *line_target_x, *line_target_y;
     HeatMap *map;
+    QImage mapImage;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
